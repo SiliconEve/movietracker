@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #bd4e82;
+            text-align: center;
+            padding: 50px;
+        }
+
+        header h1 {
+            font-size: 2em;
+            color: #333;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 1.1em;
+            background-color: #28a745;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        p {
+            margin-top: 10px;
+        }
+
+        .link {
+            margin-top: 20px;
+            font-size: 1em;
+        }
+
+        .typing-effect {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: bold;
+            display: inline-block;
+            border-right: 2px solid;
+            padding-right: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3s steps(30) 1s forwards, blink 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 22em;
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 class="typing-effect">Welcome to the Movie Tracker! Please Log In</h1>
+    </header>
+
+    <div class="container">
+        <form id="loginForm">
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername" required>
+
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+
+            <button type="submit">Login</button>
+        </form>
+        <p id="loginError" style="color: red;"></p>
+        <div class="link">
+            <p>New user? <a href="register.html">Register here</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token); // Store the token in localStorage
+                    window.location.href = 'index.html'; // Redirect to the main page
+                } else {
+                    const errorData = await response.json();
+                    document.getElementById('loginError').textContent = errorData.message || 'Login failed';
+                }
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Error connecting to the server';
+            }
+        });
+
+    </script>
+</body>
+
+</html>
